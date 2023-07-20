@@ -1,0 +1,56 @@
+import abb.ArbolBinarioBusqueda;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class TestArbolBinarioBusqueda {
+
+    @Test
+    public void test1(){
+        makeTest(6,20,15);
+    }
+    @Test
+    public void test2(){
+        makeTest(20,6,15);
+    }
+    @Test
+    public void test3(){
+        makeTest(3,12,6);
+    }
+    @Test
+    public void test4(){
+        makeTest(17,24,20);
+    }
+    @Test
+    public void test5(){
+        makeTest(1,15,15);
+    }
+    @Test
+    public void test6(){
+        makeTest(6,12,6);
+    }
+    @Test
+    public void test7(){
+        makeTest(1,6,6);
+    }
+    @Test
+    public void test8(){
+        makeTest(17,18,18);
+    }
+    @Test
+    public void test9(){
+        makeTest(9,17,15);
+    }
+    @Test
+    public void test10(){
+        makeTest(6,30,null);
+    }
+
+    private void makeTest(int a, int b, Integer expected){
+        ArbolBinarioBusqueda<Integer> arbol = new ArbolBinarioBusqueda<>();
+        arbol.insertar(15,6,20,3,9,18,24,17,4,1,7,12);
+
+        Integer actual = arbol.getAncestroComun(a, b);
+        Assert.assertEquals(expected, actual);
+    }
+
+}

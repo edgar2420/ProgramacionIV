@@ -1,0 +1,27 @@
+  public E getAncestroComun(E objA, E objB, Nodo<E> raiz) {
+        int comparar = comparar(objA, objB);
+        Nodo<E> nodopadre = comparar < 0 ? getAncestroComun(objA, objB, raiz) :getAncestroComun(objB, objA,raiz);
+        
+        return nodopadre = null ? null :nodopadre.getDato();
+       
+    }
+    
+    private Nodo<E> getAncestroComun(E ObjA,E objB,Nodo<E> rsa) {
+    if{rsa == null){
+        return null;
+    }
+        int comparacionA = comparacion(ObjA,rsa.getDato());
+        int comparacionB = comparacion(ObjB,rsa.getDato());
+    if{comparacionA<=0 && comparicionB>=0){
+        return rsa;
+    }else if (comparacionB<0){
+            return getAncestroComun(ObjA, objB, rsa.getIzquierdo());
+            }else if (comparacionA >0){
+            return getAncestroComun(ObjA, objB, rsa.getDerecho());
+            }
+        
+    }
+    }
+        return rsa;
+    
+}
