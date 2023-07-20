@@ -1,0 +1,161 @@
+package diccionario;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DiccionarioTablaHash<K, V> extends Diccionario<K, V> {
+
+    private DiccionarioSecuencia<K, V>[] elementos;
+    private final float FACTOR_CARGA = 0.6f;
+    private int limiteElementos;
+
+    public DiccionarioTablaHash(Comparador<K> comparador) {
+        super(comparador);
+        init();
+    }
+
+    public DiccionarioTablaHash() {
+        super();
+        init();
+    }
+
+    private void init() {
+        elementos = new DiccionarioSecuencia[11];
+        limiteElementos = (int) (FACTOR_CARGA * elementos.length);
+
+    }
+
+    @Override
+    public void insertar(K key, V value) {
+        if (limiteElementos == cantidadElementos) {
+            rehash();
+        }
+
+        int index = getPosicion(key);
+
+        boolean aumentarCantidad = true;
+        if (elementos[index] != null && elementos[index].contieneLlave(key)) {
+            aumentarCantidad = false;
+        }
+
+        if (elementos[index] == null)
+            elementos[index] = new DiccionarioSecuencia<>(comparador);
+
+        elementos[index].insertar(key, value);
+        if (aumentarCantidad) {
+            cantidadElementos++;
+        }
+
+    }
+
+    private boolean esPrimo(int n) {
+        for (int i = 2; i < n; i++) {
+            if (n % i == 0)
+                return false;
+        }
+        return true;
+    }
+
+    private void rehash() {
+        int n = (elementos.length * 2) + 1;
+        while (!esPrimo(n)) {
+            n++;
+        }
+
+        limiteElementos = (int) (FACTOR_CARGA * n);
+        DiccionarioSecuencia<K, V>[] temp = new DiccionarioSecuencia[n];
+
+        for (int i = 0; i < elementos.length; i++) {
+            if (elementos[i] == null) {
+                continue;
+            }
+
+            Nodo<K, V> actual = elementos[i].primero;
+            while (actual != null) {
+                int index = getPosicion(actual.getKey(), n);
+
+                if (temp[index] == null)
+                    temp[index] = new DiccionarioSecuencia<>(this.comparador);
+
+                temp[index].insertar(actual.getKey(), actual.getValue());
+                actual = actual.getSiguiente();
+            }
+
+        }
+
+        elementos = temp;
+
+    }
+
+
+    @Override
+    public V obtener(K key) {
+        int index = getPosicion(key);
+        if (elementos[index] == null)
+            return null;
+
+        return elementos[index].obtener(key);
+    }
+
+    @Override
+    public V eliminar(K key) {
+        int index = getPosicion(key);
+        if (elementos[index] == null)
+            return null;
+        int cantindadInicial = elementos[index].getCantidadElementos();
+        V eliminado = elementos[index].eliminar(key);
+        if (cantindadInicial != elementos[index].getCantidadElementos()) {
+            cantidadElementos--;
+        }
+
+        return eliminado;
+    }
+
+    @Override
+    public boolean contieneLlave(K key) {
+        int index = getPosicion(key);
+        if (elementos[index] == null)
+            return false;
+
+        return elementos[index].contieneLlave(key);
+    }
+
+    @Override
+    public boolean estaVacio() {
+        return cantidadElementos == 0;
+    }
+
+    @Override
+    public List<K> getLlaves() {
+
+        List<K> list = new ArrayList<>();
+        for (DiccionarioSecuencia<K, V> dic : elementos) {
+            if (dic != null) {
+                list.addAll(dic.getLlaves());
+            }
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<V> getValores() {
+        List<V> list = new ArrayList<>();
+        for (DiccionarioSecuencia<K, V> dic : elementos) {
+            if (dic != null) {
+                list.addAll(dic.getValores());
+            }
+        }
+        return list;
+    }
+
+    private int getPosicion(K key, int length) {
+        int hash = comparador.getHashCode(key);
+        int numero = hash & 0x7FFFFFFF;
+        return numero % length;
+    }
+
+    private int getPosicion(K key) {
+        return getPosicion(key, elementos.length);
+    }
+}

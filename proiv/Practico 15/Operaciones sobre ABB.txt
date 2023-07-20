@@ -1,0 +1,93 @@
+---- Obtener los elementos de la rama mas larga.
+
+    public List<E> getRamaMasLarga() {
+        List<E> recorrido = new ArrayList<>();
+        getRamaMasLarga(raiz, recorrido);
+        return recorrido;
+    }
+
+    private void getRamaMasLarga(Nodo<E> rsa, List<E> recorrido) {
+        if (rsa == null) {
+            return;
+        }
+
+        recorrido.add(rsa.getDato());
+        int alturaSI = getAltura(rsa.getIzquierdo());
+        int alturaSD = getAltura(rsa.getDerecho());
+        if (alturaSI > alturaSD) {
+            getRamaMasLarga(rsa.getIzquierdo(), recorrido);
+        } else {
+            getRamaMasLarga(rsa.getDerecho(), recorrido);
+        }
+     }
+
+---- Listado de los nodos que tengan 2 hijos.
+
+   public List<E> getDosHijos() {
+        List<E> list = new ArrayList<>();
+        getDosHijos(raiz, list);
+        return list;
+    }
+
+    private void getDosHijos(Nodo<E> rsa, List<E> list) {
+        if (rsa == null) {
+            return;
+        }
+
+        if (rsa.getDerecho() != null && rsa.getIzquierdo() != null) {
+
+            list.add(rsa.getDato());
+        }
+        
+        getDosHijos(rsa.getIzquierdo(), list);
+        getDosHijos(rsa.getDerecho(), list);
+    }
+
+---- Obtener los elementos de un nivel específico.
+
+	
+
+---- Obtener solo los elementos que se encuentren en un hijo izquierdo.
+
+    public List<E> getHijosIzquierda() {
+        List<E> recorrido = new ArrayList<>();
+        Queue<Nodo<E>> q = new LinkedList<>();
+        q.add(raiz);
+        getHijosIzquierda(recorrido, q);
+
+        return recorrido;
+    }
+
+    private void getHijosIzquierda(List<E> recorrido, Queue<Nodo<E>> q) {
+
+        if (raiz == null) {
+            return;
+        }
+
+        q.add(raiz);
+        q.add(null);
+
+        while (q.size() > 0) {
+            Nodo temp = q.peek();
+
+            if (temp != null) {
+                recorrido.add((E) temp);
+
+                while (q.peek() != null) {
+                    if (temp.getIzquierdo() != null) {
+                        q.add(temp.getIzquierdo());
+                    }
+
+                    if (temp.getDerecho() != null) {
+                        q.add(temp.getDerecho());
+                    }
+                    q.remove();
+
+                    temp = q.peek();
+                }
+                q.add(null);
+            }
+            q.remove();
+        }
+
+    }
